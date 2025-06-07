@@ -20,3 +20,8 @@ $conn->execute("INSERT INTO products (name, price, stock) VALUES (:name, :price,
     'stock' => 150,
 ]);
 
+$conn->execute("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)", [
+    'name' => 'John Doe',
+    'email' => 'john@example.com',
+    'password' => password_hash('password', PASSWORD_DEFAULT),
+]);

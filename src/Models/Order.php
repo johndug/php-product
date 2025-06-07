@@ -24,7 +24,7 @@ class Order
         $this->conn = new Database();
     }
 
-    public function createOrder(int $userId, string $status = 'pending'): int
+    public static function createOrder(int $userId, string $status = 'pending'): ?Order
     {
         $user = User::getById($userId);
 
@@ -38,12 +38,13 @@ class Order
             throw new \Exception("Cart is empty");
         }
 
-        $this->conn->execute("INSERT INTO orders (user_id, status) VALUES (:user_id, :status)", [
+        $instance = new self();
+        $instance->conn->execute("INSERT INTO orders (user_id, status) VALUES (:user_id, :status)", [
             'user_id' => $userId,
             'status' => $status,
         ]);
 
-        $this->id = $this->conn->lastInsertId();
+        $instance->id = $instance->conn->lastInsertId();
 
         $totalAmount = 0;
 
@@ -55,17 +56,19 @@ class Order
             }
             
             $orderItem = new OrderItem();
-            $orderItem->createOrderItem($this->id, $productId, $quantity, $product->getPrice());
+            $orderItem->createOrderItem($instance->id, $productId, $quantity, $product->getPrice());
 
             $totalAmount += $product->getPrice() * $quantity;
         }
 
-        $this->conn->execute("UPDATE orders SET total_amount = :total_amount WHERE id = :id", [
+        $instance->conn->execute("UPDATE orders SET total_amount = :total_amount WHERE id = :id", [
             'total_amount' => $totalAmount,
-            'id' => $this->id,
+            'id' => $instance->id,
         ]);
 
-        return $this->id;
+        Cart::clearCart();
+
+        return $instance;
     }
 
     public static function getById(int $orderId): array
@@ -75,10 +78,40 @@ class Order
             'id' => $orderId,
         ]);
 
+        $result['items'] = $instance->conn->fetch("SELECT order_id, product_id, quantity, price FROM order_items WHERE order_id = :order_id", [
+            'order_id' => $orderId,
+        ]);
+        
+
         if (!$result) {
             return [];
         }
 
         return $result;
+    }
+
+    public static function getOrders(int $userId): ?array
+    {
+        $instance = new self();
+        $result = $instance->conn->fetch("SELECT * FROM orders WHERE user_id = :user_id", [
+            'user_id' => $userId,
+        ]);
+
+        if (!$result) {
+            return [];
+        }
+
+        foreach ($result as $order) {
+            $order['items'] = $instance->conn->fetch("SELECT order_id, product_id, quantity, price FROM order_items WHERE order_id = :order_id", [
+                'order_id' => $order['id'],
+            ]);
+        }
+
+        return $result;
+    }
+    
+    public function getId(): int
+    {
+        return $this->id;
     }
 }

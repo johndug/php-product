@@ -3,7 +3,7 @@
         'name' => 'johndug/php-product',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '081ffabebadd3476c68a24107f592f483f00fb54',
+        'reference' => '6e780983c192aaf6aeff77755ccddf32a17459a7',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'johndug/php-product' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '081ffabebadd3476c68a24107f592f483f00fb54',
+            'reference' => '6e780983c192aaf6aeff77755ccddf32a17459a7',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
