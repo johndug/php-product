@@ -1,15 +1,21 @@
 # Vanilla php product cart
 
-* initialize database in directory root php migration.php then php seed-products.php
+* initialize database in directory root php migration.php then php seeders.php which will load the products and a user
 
 * and run php index.php
 
- - it adds the 3 apples and one orange
+* from the ProductController getById return an Product object with Apple data
 
- - adds them to the cart
+* From the user controller getByEmail returns a User object with user data
 
- - then creates a user
+* From the CartController we add 3 apples to the cart in session
 
- - then places an order
+* from the ProductController getById return an Product object with Orage data
 
- - and displays the order
+* From the CartController we add 1 orange to the cart
+
+* from the OrderController createOrder it adds the cart contence into the order and the order_items with the user and saves it to the database
+
+## Next Stage
+
+- auth system maybe some policy

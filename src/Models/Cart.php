@@ -4,8 +4,6 @@ namespace App\Models;
 
 session_start();
 
-require_once __DIR__ . '/../../vendor/autoload.php';
-
 use App\Database\Database;
 
 class Cart
@@ -17,7 +15,7 @@ class Cart
         $this->conn = new Database();
     }
 
-    public function addToCart(int $productId, int $quantity): void
+    public static function addToCart(int $productId, int $quantity): ?bool
     {
         $product = Product::findById($productId);
 
@@ -28,6 +26,8 @@ class Cart
         $cart = $_SESSION['cart'] ?? [];
         $cart[$productId] = $quantity;
         $_SESSION['cart'] = $cart;
+
+        return true;
     }
 
     public static function getCart(): array
@@ -35,24 +35,28 @@ class Cart
         return $_SESSION['cart'] ?? [];
     }
 
-    public function removeFromCart(int $productId): void
+    public static function removeFromCart(int $productId): ?bool
     {
         $cart = $_SESSION['cart'] ?? [];
         unset($cart[$productId]);
         $_SESSION['cart'] = $cart;
+
+        return true;
     }
 
-    public function clearCart(): void
+    public static function clearCart(): bool
     {
         $_SESSION['cart'] = [];
+
+        return true;
     }
 
-    public function showCart(): ?array
+    public static function showCart(): ?array
     {
         $cart = $_SESSION['cart'] ?? [];
 
         if (empty($cart)) {
-            return null;
+            return [];
         }
 
         $products = [];
